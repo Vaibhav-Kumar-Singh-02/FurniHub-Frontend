@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import { useEffect, useState } from 'react'
@@ -18,7 +18,10 @@ export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth()
   const { cart } = useCart()
   const navigate = useNavigate()
+  const location = useLocation()
   const [categories, setCategories] = useState([])
+
+  const activeCategory = new URLSearchParams(location.search).get('category')
 
   useEffect(() => {
     getCategories()
@@ -95,14 +98,17 @@ export default function Navbar() {
       {categories.length > 0 && (
         <div className="navbar__categories">
           <div className="container navbar__categories-inner">
-            <Link to="/products" className="navbar__category">
+            <Link
+              to="/products"
+              className={`navbar__category${!activeCategory ? ' navbar__category--active' : ''}`}
+            >
               All
             </Link>
             {categories.map((category) => (
               <Link
                 key={category.id}
                 to={`/products?category=${category.id}`}
-                className="navbar__category"
+                className={`navbar__category${String(category.id) === activeCategory ? ' navbar__category--active' : ''}`}
               >
                 {category.name}
               </Link>

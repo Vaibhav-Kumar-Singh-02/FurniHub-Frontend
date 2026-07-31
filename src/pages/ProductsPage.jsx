@@ -1,24 +1,19 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { getCategories, getProducts } from '../services/api'
+import { getProducts } from '../services/api'
 import ProductCard from '../components/ProductCard'
 
 const PAGE_SIZE = 12
 
 export default function ProductsPage() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const categoryId = searchParams.get('category') || ''
 
-  const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-
-  useEffect(() => {
-    getCategories().then(setCategories).catch(() => {})
-  }, [])
 
   const loadProducts = useCallback(async () => {
     setLoading(true)
@@ -46,34 +41,9 @@ export default function ProductsPage() {
     loadProducts()
   }, [loadProducts])
 
-  const handleCategory = (value) => {
-    if (value) setSearchParams({ category: value })
-    else setSearchParams({})
-  }
-
   return (
     <div className="container section">
       <h1 className="page-title">Shop</h1>
-
-      <div className="filter-bar" role="group" aria-label="Filter products by category">
-        <button
-          type="button"
-          className={`chip${!categoryId ? ' chip--active' : ''}`}
-          onClick={() => handleCategory('')}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            className={`chip${String(cat.id) === categoryId ? ' chip--active' : ''}`}
-            onClick={() => handleCategory(String(cat.id))}
-          >
-            {cat.name}
-          </button>
-        ))}
-      </div>
 
       {error && <p className="alert alert--error">{error}</p>}
 

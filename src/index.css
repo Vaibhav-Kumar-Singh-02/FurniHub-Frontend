@@ -266,6 +266,16 @@ a {
   color: var(--color-primary-dark);
 }
 
+.navbar__category--active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.navbar__category--active:hover {
+  background: var(--color-primary-dark);
+  color: #fff;
+}
+
 /* ---------- Hero ---------- */
 .hero {
   background: linear-gradient(120deg, #f5e6d3 0%, #ead9c2 100%);
