@@ -1,14 +1,33 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
+import { useEffect, useState } from 'react'
+import { getCategories } from '../services/api'
+
+function initials(name = '') {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+}
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth()
   const { cart } = useCart()
   const navigate = useNavigate()
+  const [categories, setCategories] = useState([])
 
-  const handleLogout = () => {
-    logout()
+  useEffect(() => {
+    getCategories()
+      .then(setCategories)
+      .catch(() => {})
+  }, [])
+
+  const handleLogout = async () => {
+    await logout()
     navigate('/')
   }
 
@@ -25,8 +44,23 @@ export default function Navbar() {
           <NavLink to="/products" className={navLinkClass}>
             Shop
           </NavLink>
-          <NavLink to="/cart" className={navLinkClass}>
-            Cart
+          <NavLink to="/cart" className={`navbar__link navbar__cart`} aria-label="Cart">
+            <svg
+              className="navbar__cart-icon"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
             {cart.totalItems > 0 && <span className="navbar__badge">{cart.totalItems}</span>}
           </NavLink>
           {isAuthenticated ? (
@@ -34,7 +68,14 @@ export default function Navbar() {
               <NavLink to="/orders" className={navLinkClass}>
                 Orders
               </NavLink>
-              <span className="navbar__user">Hi, {user?.fullName?.split(' ')[0]}</span>
+              <div className="navbar__user">
+                <Link to="/change-password" className="navbar__avatar" title={user?.fullName}>
+                  {initials(user?.fullName)}
+                </Link>
+                <Link to="/change-password" className="navbar__username">
+                  Hi, {user?.fullName?.split(' ')[0]}
+                </Link>
+              </div>
               <button type="button" className="btn btn--ghost" onClick={handleLogout}>
                 Logout
               </button>
@@ -51,6 +92,24 @@ export default function Navbar() {
           )}
         </nav>
       </div>
+      {categories.length > 0 && (
+        <div className="navbar__categories">
+          <div className="container navbar__categories-inner">
+            <Link to="/products" className="navbar__category">
+              All
+            </Link>
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                to={`/products?category=${category.id}`}
+                className="navbar__category"
+              >
+                {category.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   )
 }

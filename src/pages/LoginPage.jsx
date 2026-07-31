@@ -8,15 +8,16 @@ export default function LoginPage() {
   const location = useLocation()
   const from = location.state?.from || '/'
 
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm] = useState({ emailOrMobile: '', password: '' })
   const [errors, setErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [remember, setRemember] = useState(false)
 
   const validate = () => {
     const next = {}
-    if (!form.email.trim()) next.email = 'Email is required'
-    else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = 'Enter a valid email'
+    if (!form.emailOrMobile.trim()) next.emailOrMobile = 'Email or mobile is required'
     if (!form.password) next.password = 'Password is required'
     setErrors(next)
     return Object.keys(next).length === 0
@@ -35,10 +36,10 @@ export default function LoginPage() {
     setLoading(true)
     setFormError('')
     try {
-      await login({ email: form.email.trim(), password: form.password })
+      await login({ emailOrMobile: form.emailOrMobile.trim(), password: form.password }, remember)
       navigate(from, { replace: true })
     } catch (err) {
-      if (err.status === 401) setFormError('Invalid email or password.')
+      if (err.status === 401) setFormError('Invalid email/mobile or password.')
       else if (err.status === 400) {
         const fieldErrors = err.body?.errors || {}
         if (Object.keys(fieldErrors).length) setErrors(fieldErrors)
@@ -59,39 +60,63 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-field">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="emailOrMobile">Email or mobile</label>
             <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={form.email}
+              id="emailOrMobile"
+              name="emailOrMobile"
+              type="text"
+              autoComplete="username"
+              value={form.emailOrMobile}
               onChange={handleChange}
-              aria-invalid={Boolean(errors.email)}
+              aria-invalid={Boolean(errors.emailOrMobile)}
             />
-            {errors.email && (
+            {errors.emailOrMobile && (
               <span className="form-field__error" role="alert">
-                {errors.email}
+                {errors.emailOrMobile}
               </span>
             )}
           </div>
 
           <div className="form-field">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              value={form.password}
-              onChange={handleChange}
-              aria-invalid={Boolean(errors.password)}
-            />
+            <div className="password-field">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                value={form.password}
+                onChange={handleChange}
+                aria-invalid={Boolean(errors.password)}
+              />
+              <button
+                type="button"
+                className="password-field__toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
             {errors.password && (
               <span className="form-field__error" role="alert">
                 {errors.password}
               </span>
             )}
+          </div>
+
+          <div className="auth-card__row">
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+              />
+              <span>Remember me</span>
+            </label>
+            <Link to="/forgot-password" className="auth-card__link">
+              Forgot password?
+            </Link>
           </div>
 
           <button type="submit" className="btn btn--primary btn--block" disabled={loading}>

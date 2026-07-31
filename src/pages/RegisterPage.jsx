@@ -2,6 +2,24 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
+const hasLowerCase = /[a-z]/
+const hasUpperCase = /[A-Z]/
+const hasDigit = /\d/
+const hasSpecial = /[@$!%*?&]/
+
+function passwordStrength(password) {
+  if (!password) return 0
+  let score = 0
+  if (hasLowerCase.test(password)) score += 1
+  if (hasUpperCase.test(password)) score += 1
+  if (hasDigit.test(password)) score += 1
+  if (hasSpecial.test(password)) score += 1
+  if (password.length >= 8) score += 1
+  return Math.min(score, 4)
+}
+
+const STRENGTH_LABELS = ['', 'Weak', 'Fair', 'Good', 'Strong']
+
 export default function RegisterPage() {
   const { register } = useAuth()
   const navigate = useNavigate()
@@ -16,6 +34,10 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+
+  const strength = passwordStrength(form.password)
 
   const validate = () => {
     const next = {}
@@ -26,6 +48,8 @@ export default function RegisterPage() {
     else if (!/^\d{10}$/.test(form.mobile.trim())) next.mobile = 'Mobile must contain exactly 10 digits'
     if (!form.password) next.password = 'Password is required'
     else if (form.password.length < 8) next.password = 'Password must contain at least 8 characters'
+    else if (strength < 4)
+      next.password = 'Must include uppercase, lowercase, a number and a special character'
     if (!form.confirmPassword) next.confirmPassword = 'Please confirm your password'
     else if (form.password !== form.confirmPassword) next.confirmPassword = 'Passwords do not match'
     setErrors(next)
@@ -134,15 +158,35 @@ export default function RegisterPage() {
 
           <div className="form-field">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              value={form.password}
-              onChange={handleChange}
-              aria-invalid={Boolean(errors.password)}
-            />
+            <div className="password-field">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                value={form.password}
+                onChange={handleChange}
+                aria-invalid={Boolean(errors.password)}
+              />
+              <button
+                type="button"
+                className="password-field__toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+            {form.password && (
+              <div className="strength">
+                <div className="strength__bar">
+                  <span className={`strength__fill strength__fill--${strength}`} />
+                </div>
+                <span className="strength__label">
+                  {STRENGTH_LABELS[strength] ? `Strength: ${STRENGTH_LABELS[strength]}` : ''}
+                </span>
+              </div>
+            )}
             {errors.password && (
               <span className="form-field__error" role="alert">
                 {errors.password}
@@ -152,15 +196,25 @@ export default function RegisterPage() {
 
           <div className="form-field">
             <label htmlFor="confirmPassword">Confirm password</label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              aria-invalid={Boolean(errors.confirmPassword)}
-            />
+            <div className="password-field">
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirm ? 'text' : 'password'}
+                autoComplete="new-password"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                aria-invalid={Boolean(errors.confirmPassword)}
+              />
+              <button
+                type="button"
+                className="password-field__toggle"
+                onClick={() => setShowConfirm((prev) => !prev)}
+                aria-label={showConfirm ? 'Hide password' : 'Show password'}
+              >
+                {showConfirm ? 'Hide' : 'Show'}
+              </button>
+            </div>
             {errors.confirmPassword && (
               <span className="form-field__error" role="alert">
                 {errors.confirmPassword}
