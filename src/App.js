@@ -332,10 +332,9 @@ const CartPage = () => {
                 <li key={item.id} className="cart-item">
                   <div className="cart-item-image">
                     {item.imageUrls && item.imageUrls.length > 0 ? (
-                      <img src={item.imageUrls[0]} alt={item.name} />
-                    ) : (
-                      <div className="cart-item-image-placeholder">No Image</div>
-                    )}
+                      <img src={item.imageUrls[0]} alt={item.name} onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }} />
+                    ) : null}
+                    <div className="cart-item-image-placeholder" style={{ display: item.imageUrls && item.imageUrls.length > 0 ? 'none' : 'flex' }}>No Image</div>
                   </div>
                   <div className="cart-item-info">
                     <div className="cart-item-name">{item.name}</div>
@@ -353,137 +352,164 @@ const CartPage = () => {
               ))}
             </ul>
 
-            <div className="cart-summary">
-              <div className="cart-summary-row">
-                <span className="row-label">Subtotal</span>
-                <span className="row-value">₹{subtotal.toLocaleString('en-IN')}</span>
-              </div>
-              {appliedCoupon && (
-                <div className="cart-summary-row" style={{ color: 'var(--success)' }}>
-                  <span className="row-label">Coupon Discount ({appliedCoupon.code})</span>
-                  <span className="row-value">-₹{couponDiscount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            <div className="cart-layout">
+              <div className="cart-summary">
+                <h3 className="cart-summary-title">Order Summary</h3>
+                <div className="cart-summary-rows">
+                  <div className="cart-summary-row">
+                    <span className="row-label">Subtotal</span>
+                    <span className="row-value">₹{subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  {appliedCoupon && (
+                    <div className="cart-summary-row discount">
+                      <span className="row-label">Coupon Discount ({appliedCoupon.code})</span>
+                      <span className="row-value">-₹{couponDiscount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  )}
+                  <div className="cart-summary-row">
+                    <span className="row-label">GST (18%)</span>
+                    <span className="row-value">₹{gstAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="cart-summary-row">
+                    <span className="row-label">Delivery</span>
+                    <span className="row-value free">Free</span>
+                  </div>
+                  <div className="cart-summary-row total">
+                    <span className="row-label">Total</span>
+                    <span className="row-value">₹{grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                  </div>
                 </div>
-              )}
-              <div className="cart-summary-row">
-                <span className="row-label">GST (18%)</span>
-                <span className="row-value">₹{gstAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
               </div>
-              <div className="cart-summary-row">
-                <span className="row-label">Delivery</span>
-                <span className="row-value" style={{ color: 'var(--success)' }}>Free</span>
-              </div>
-              <div className="cart-summary-row total">
-                <span className="row-label">Total</span>
-                <span className="row-value">₹{grandTotal.toLocaleString('en-IN')}</span>
-              </div>
-            </div>
 
-            {/* Coupon Section */}
-            <div className="coupon-section">
-              <h3>Apply Coupon</h3>
-              <div className="coupon-form">
-                <input
-                  type="text"
-                  className="coupon-input"
-                  placeholder="Enter coupon code"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                  disabled={!!appliedCoupon}
-                />
-                {appliedCoupon ? (
-                  <button type="button" className="btn btn-secondary" onClick={removeCoupon}>Remove</button>
-                ) : (
-                  <button type="button" className="btn btn-primary" onClick={applyCoupon}>Apply</button>
-                )}
-              </div>
-              {couponMessage && (
-                <div className={`coupon-message ${couponMessageType === 'success' ? 'coupon-success' : couponMessageType === 'error' ? 'coupon-error' : 'coupon-info'}`}>
-                  {couponMessage}
-                </div>
-              )}
-            </div>
-
-            {/* Delivery Address */}
-            <div className="address-section">
-              <h3>Delivery Address</h3>
-              {addressError && <p className="address-error">{addressError}</p>}
-              <div className="address-form">
-                <div className="address-row">
-                  <label className="address-field">
-                    <span>Full Name <em>*</em></span>
+              <div className="cart-actions-card">
+                <div className="coupon-section">
+                  <h3>Apply Coupon</h3>
+                  <div className="coupon-form">
                     <input
                       type="text"
-                      value={addressFullName}
-                      onChange={(e) => setAddressFullName(e.target.value)}
-                      placeholder="Enter full name"
+                      className="coupon-input"
+                      placeholder="Enter coupon code"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      disabled={!!appliedCoupon}
                     />
-                  </label>
-                  <label className="address-field">
-                    <span>Phone Number <em>*</em></span>
-                    <input
-                      type="tel"
-                      value={addressPhone}
-                      onChange={(e) => setAddressPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      placeholder="10-digit mobile number"
-                      maxLength="10"
-                    />
-                  </label>
+                    {appliedCoupon ? (
+                      <button type="button" className="btn btn-secondary" onClick={removeCoupon}>Remove</button>
+                    ) : (
+                      <button type="button" className="btn btn-primary" onClick={applyCoupon}>Apply</button>
+                    )}
+                  </div>
+                  {couponMessage && (
+                    <div className={`coupon-message ${couponMessageType === 'success' ? 'coupon-success' : couponMessageType === 'error' ? 'coupon-error' : 'coupon-info'}`}>
+                      {couponMessage}
+                    </div>
+                  )}
                 </div>
-                <label className="address-field full-width">
-                  <span>Address Line 1 <em>*</em></span>
-                  <input
-                    type="text"
-                    value={addressLine1}
-                    onChange={(e) => setAddressLine1(e.target.value)}
-                    placeholder="House no., Building, Street, Area"
-                  />
-                </label>
-                <label className="address-field full-width">
-                  <span>Address Line 2 <em>(Optional)</em></span>
-                  <input
-                    type="text"
-                    value={addressLine2}
-                    onChange={(e) => setAddressLine2(e.target.value)}
-                    placeholder="Landmark, Colony"
-                  />
-                </label>
-                <div className="address-row address-row-3">
-                  <label className="address-field">
-                    <span>City <em>*</em></span>
-                    <input
-                      type="text"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="City"
-                    />
-                  </label>
-                  <label className="address-field">
-                    <span>State <em>*</em></span>
-                    <input
-                      type="text"
-                      value={stateRegion}
-                      onChange={(e) => setStateRegion(e.target.value)}
-                      placeholder="State"
-                    />
-                  </label>
-                  <label className="address-field">
-                    <span>Pincode <em>*</em></span>
-                    <input
-                      type="tel"
-                      value={pincode}
-                      onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      placeholder="6-digit pincode"
-                      maxLength="6"
-                    />
-                  </label>
+
+                <div className="address-section">
+                  <h3>Delivery Address</h3>
+                  {addressError && <p className="address-error">{addressError}</p>}
+                  <div className="address-form">
+                    <div className="address-row">
+                      <label className="address-field">
+                        <span>Full Name <em>*</em></span>
+                        <input
+                          type="text"
+                          value={addressFullName}
+                          onChange={(e) => setAddressFullName(e.target.value)}
+                          placeholder="Enter full name"
+                        />
+                      </label>
+                      <label className="address-field">
+                        <span>Phone Number <em>*</em></span>
+                        <input
+                          type="tel"
+                          value={addressPhone}
+                          onChange={(e) => setAddressPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                          placeholder="10-digit mobile number"
+                          maxLength="10"
+                        />
+                      </label>
+                    </div>
+                    <label className="address-field full-width">
+                      <span>Address Line 1 <em>*</em></span>
+                      <input
+                        type="text"
+                        value={addressLine1}
+                        onChange={(e) => setAddressLine1(e.target.value)}
+                        placeholder="House no., Street, Area"
+                      />
+                    </label>
+                    <label className="address-field full-width">
+                      <span>Address Line 2</span>
+                      <input
+                        type="text"
+                        value={addressLine2}
+                        onChange={(e) => setAddressLine2(e.target.value)}
+                        placeholder="Landmark (optional)"
+                      />
+                    </label>
+                    <div className="address-row">
+                      <label className="address-field">
+                        <span>City <em>*</em></span>
+                        <input
+                          type="text"
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="City"
+                        />
+                      </label>
+                      <label className="address-field">
+                        <span>State <em>*</em></span>
+                        <input
+                          type="text"
+                          value={stateRegion}
+                          onChange={(e) => setStateRegion(e.target.value)}
+                          placeholder="State"
+                        />
+                      </label>
+                    </div>
+                    <label className="address-field full-width">
+                      <span>Pincode <em>*</em></span>
+                      <input
+                        type="text"
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        placeholder="6-digit pincode"
+                        maxLength="6"
+                      />
+                    </label>
+                  </div>
                 </div>
+
+                <div className="payment-section">
+                  <h3>Payment Method</h3>
+                  {paymentError && <p className="address-error">{paymentError}</p>}
+                  <div className="payment-options">
+                    <label className="payment-option">
+                      <input type="radio" name="payment" value="cod" defaultChecked />
+                      <span className="payment-label">Cash on Delivery</span>
+                    </label>
+                    <label className="payment-option">
+                      <input type="radio" name="payment" value="card" />
+                      <span className="payment-label">Card</span>
+                    </label>
+                    <label className="payment-option">
+                      <input type="radio" name="payment" value="upi" />
+                      <span className="payment-label">UPI</span>
+                    </label>
+                    <label className="payment-option">
+                      <input type="radio" name="payment" value="razorpay" />
+                      <span className="payment-label">Razorpay</span>
+                    </label>
+                  </div>
+                </div>
+
+                <button type="button" className="btn btn-primary checkout-btn" onClick={handleCheckout}>
+                  Place Order
+                </button>
               </div>
             </div>
-
-            {!addressConfirmed && items.length > 0 && (
-              <button className="btn btn-primary confirm-address-btn" onClick={handleConfirmAddress}>
-                Confirm Address
-              </button>
             )}
             {addressConfirmed && (
               <p className="address-confirmed-msg">Address confirmed</p>
