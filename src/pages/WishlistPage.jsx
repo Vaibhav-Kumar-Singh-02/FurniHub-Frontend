@@ -105,7 +105,7 @@ const WishlistPage = () => {
               <div key={item.id} className="wishlist-card">
                 <div className="wishlist-card-image">
                   {getImageSrc(item) ? (
-                    <img src={getImageSrc(item)} alt={item.productName} onError={() => handleImageError(item.id)} />
+                    <img src={getImageSrc(item)} alt={item.productName} onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/300x300/f1f5f9/94a3b8?text=No+Image'; handleImageError(item.id); }} />
                   ) : (
                     <div className="wishlist-card-placeholder">
                       <span>No Image</span>

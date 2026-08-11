@@ -331,10 +331,14 @@ const CartPage = () => {
               {items.map((item) => (
                 <li key={item.id} className="cart-item">
                   <div className="cart-item-image">
-                    {item.imageUrls && item.imageUrls.length > 0 ? (
-                      <img src={item.imageUrls[0]} alt={item.name} onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }} />
-                    ) : null}
-                    <div className="cart-item-image-placeholder" style={{ display: item.imageUrls && item.imageUrls.length > 0 ? 'none' : 'flex' }}>No Image</div>
+                    <img
+                      src={item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0] : (item.imageUrl || '')}
+                      alt={item.name}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://via.placeholder.com/80x80/f1f5f9/94a3b8?text=No+Image';
+                      }}
+                    />
                   </div>
                   <div className="cart-item-info">
                     <div className="cart-item-name">{item.name}</div>

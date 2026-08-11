@@ -291,11 +291,12 @@ const CustomerOrders = () => {
                       <ul style={{ marginTop: 8, paddingLeft: 20 }}>
                         {selectedOrder.items.map((item, idx) => (
                           <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                            {item.imageUrl ? (
-                              <img src={item.imageUrl} alt={item.productName} style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }} />
-                            ) : (
-                              <div style={{ width: 48, height: 48, borderRadius: 8, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.7rem' }}>No Image</div>
-                            )}
+                            <img
+                              src={item.imageUrl || 'https://via.placeholder.com/48x48/f1f5f9/94a3b8?text=No+Image'}
+                              alt={item.productName}
+                              style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }}
+                              onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/48x48/f1f5f9/94a3b8?text=No+Image'; }}
+                            />
                             <div>
                               <div style={{ fontWeight: 600 }}>{item.productName || 'Product'}</div>
                               <div style={{ fontSize: '0.85rem', color: '#64748b' }}>x{item.quantity} - {formatCurrency(item.totalPrice || item.pricePerUnit * item.quantity)}</div>
@@ -310,11 +311,12 @@ const CustomerOrders = () => {
                         {selectedOrder.items.map((item, idx) => (
                           <div key={idx} style={{ marginTop: 12, padding: 12, border: '1px solid #e5e7eb', borderRadius: 8 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                              {item.imageUrl ? (
-                                <img src={item.imageUrl} alt={item.productName} style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} />
-                              ) : (
-                                <div style={{ width: 40, height: 40, borderRadius: 6, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.65rem' }}>No Image</div>
-                              )}
+                              <img
+                                src={item.imageUrl || 'https://via.placeholder.com/40x40/f1f5f9/94a3b8?text=No+Image'}
+                                alt={item.productName}
+                                style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }}
+                                onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/40x40/f1f5f9/94a3b8?text=No+Image'; }}
+                              />
                               <p style={{ margin: 0, fontWeight: 600 }}>{item.productName || 'Product'}</p>
                             </div>
                             {reviewProductId === item.productId ? (
