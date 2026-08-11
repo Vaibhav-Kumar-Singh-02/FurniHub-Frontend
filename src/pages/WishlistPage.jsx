@@ -3,22 +3,41 @@ import { FiHeart, FiTrash2, FiShoppingCart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { wishlistAPI } from '../services/api';
 import { addToCartItem } from '../utils/cart';
+import { getWishlistItems } from '../utils/wishlist';
 import '../styles/Wishlist.css';
 
 const WishlistPage = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState(null);
+  const [source, setSource] = useState('api');
 
   const loadWishlist = async () => {
     setLoading(true);
+    setSource('api');
     try {
       const res = await wishlistAPI.getAll();
       console.log('Wishlist API response:', res);
-      setItems(res.data || []);
+      if (res.data && res.data.length > 0) {
+        setItems(res.data);
+      } else {
+        const localItems = getWishlistItems();
+        if (localItems.length > 0) {
+          setItems(localItems);
+          setSource('local');
+        } else {
+          setItems([]);
+        }
+      }
     } catch (err) {
       console.error('Wishlist API error:', err);
-      setItems([]);
+      const localItems = getWishlistItems();
+      if (localItems.length > 0) {
+        setItems(localItems);
+        setSource('local');
+      } else {
+        setItems([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -51,7 +70,7 @@ const WishlistPage = () => {
       <div className="wishlist-container">
         <div className="wishlist-header">
           <h1>My Wishlist</h1>
-          <p>{items.length} item{items.length === 1 ? '' : 's'} saved</p>
+          <p>{items.length} item{items.length === 1 ? '' : 's'} saved {source === 'local' ? '(from local cache)' : ''}</p>
         </div>
 
         {loading ? (
