@@ -192,6 +192,28 @@
   font-size: 0.95rem;
 }
 
+.wishlist-btn {
+  min-width: 120px;
+  justify-content: center;
+  padding: 14px 24px;
+  font-size: 0.95rem;
+  background: white;
+  color: var(--text-primary);
+  border: 2px solid var(--border);
+}
+
+.wishlist-btn:hover:not(:disabled) {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+.wishlist-btn.active {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
 .added-message {
   color: var(--success);
   font-weight: 600;

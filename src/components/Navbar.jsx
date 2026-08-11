@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiUser, FiShoppingCart, FiMenu, FiX, FiLogOut, FiKey, FiPackage } from 'react-icons/fi';
+import { FiUser, FiShoppingCart, FiMenu, FiX, FiLogOut, FiKey, FiPackage, FiHeart } from 'react-icons/fi';
 import { authAPI } from '../services/api';
 import { getCartCount, clearCart } from '../utils/cart';
+import { getWishlistCount } from '../utils/wishlist';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,14 +22,20 @@ const Navbar = () => {
     }
 
     setCartCount(getCartCount());
+    setWishlistCount(getWishlistCount());
 
-    const handleStorageChange = () => setCartCount(getCartCount());
+    const handleStorageChange = () => {
+      setCartCount(getCartCount());
+      setWishlistCount(getWishlistCount());
+    };
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('cart:updated', handleStorageChange);
+    window.addEventListener('wishlist:updated', handleStorageChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('cart:updated', handleStorageChange);
+      window.removeEventListener('wishlist:updated', handleStorageChange);
     };
   }, []);
 
@@ -79,6 +87,10 @@ const Navbar = () => {
           </form>
 
           <div className="navbar-actions">
+            <Link to="/wishlist" className="nav-icon wishlist-icon">
+              <FiHeart />
+              {wishlistCount > 0 && <span className="wishlist-badge">{wishlistCount}</span>}
+            </Link>
             <Link to="/cart" className="nav-icon cart-icon">
               <FiShoppingCart />
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}

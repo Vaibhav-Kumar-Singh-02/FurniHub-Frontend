@@ -179,6 +179,31 @@
   transform: scale(1.1);
 }
 
+.wishlist-icon {
+  color: #6b7280;
+}
+
+.wishlist-icon:hover {
+  color: #ef4444;
+}
+
+.wishlist-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
 .cart-icon .cart-badge {
   position: absolute;
   top: -6px;

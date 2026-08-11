@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiShoppingCart, FiPlus, FiMinus } from 'react-icons/fi';
+import { FiArrowLeft, FiShoppingCart, FiPlus, FiMinus, FiHeart } from 'react-icons/fi';
 import { catalogAPI } from '../services/api';
 import { addToCartItem } from '../utils/cart';
+import { isInWishlist as checkWishlist, toggleWishlistItem } from '../utils/wishlist';
 import '../styles/Search.css';
 
 const SearchResults = () => {
@@ -13,6 +14,7 @@ const SearchResults = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [addedProductId, setAddedProductId] = useState(null);
+  const [wishlistProductIds, setWishlistProductIds] = useState(new Set());
 
   useEffect(() => {
     if (!query.trim()) {
@@ -25,7 +27,13 @@ const SearchResults = () => {
       setError('');
       try {
         const res = await catalogAPI.searchProducts(query);
-        setResults(res.data || []);
+        const data = res.data || [];
+        setResults(data);
+        const ids = new Set();
+        data.forEach((product) => {
+          if (checkWishlist(product.productId)) ids.add(product.productId);
+        });
+        setWishlistProductIds(ids);
       } catch {
         setError('Failed to search products');
       } finally {
@@ -35,6 +43,29 @@ const SearchResults = () => {
 
     fetchResults();
   }, [query]);
+
+  const handleWishlistToggle = (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const productData = {
+      productId: product.productId,
+      name: product.name,
+      price: product.price,
+      imageUrls: product.imageUrls,
+      categoryName: product.categoryName,
+      stock: product.stock,
+    };
+    toggleWishlistItem(productData);
+    setWishlistProductIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(product.productId)) {
+        next.delete(product.productId);
+      } else {
+        next.add(product.productId);
+      }
+      return next;
+    });
+  };
 
   const formatCurrency = (val) => {
     const num = Number(val) || 0;
@@ -119,6 +150,13 @@ const SearchResults = () => {
                   disabled={product.stock === 0}
                 >
                   <FiShoppingCart /> {addedProductId === product.productId ? 'Added!' : 'Add to Cart'}
+                </button>
+                <button
+                  className={`search-card-wishlist-btn ${wishlistProductIds.has(product.productId) ? 'active' : ''}`}
+                  onClick={(e) => handleWishlistToggle(e, product)}
+                  title={wishlistProductIds.has(product.productId) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                >
+                  <FiHeart />
                 </button>
               </div>
             </div>

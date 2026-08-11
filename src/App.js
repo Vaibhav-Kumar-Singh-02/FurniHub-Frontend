@@ -29,6 +29,7 @@ import SearchResults from './pages/SearchResults'; // eslint-disable-line no-unu
 import CheckoutPage from './pages/CheckoutPage';
 import { authAPI, catalogAPI } from './services/api';
 import { clearCart } from './utils/cart';
+import WishlistPage from './pages/WishlistPage';
 import './App.css';
 
 const CartPage = () => {
@@ -778,6 +779,7 @@ function App() {
           />
 
           <Route path="/customer/orders" element={isAuthenticated ? <CustomerOrders /> : <Navigate to="/login" />} />
+          <Route path="/wishlist" element={isAuthenticated ? <WishlistPage /> : <Navigate to="/login" />} />
           <Route path="/receipt/:orderId" element={isAuthenticated ? <Receipt /> : <Navigate to="/login" />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={

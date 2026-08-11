@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FiArrowLeft, FiShoppingCart, FiStar, FiShield, FiTruck } from 'react-icons/fi';
-import { authAPI, customerReviewsAPI } from '../services/api';
+import { FiArrowLeft, FiShoppingCart, FiStar, FiShield, FiTruck, FiHeart } from 'react-icons/fi';
+import { authAPI, customerReviewsAPI, wishlistAPI } from '../services/api';
 import { addToCartItem } from '../utils/cart';
+import { isInWishlist as checkWishlist, toggleWishlistItem } from '../utils/wishlist';
 import '../styles/ProductDetail.css';
 
 const ProductDetail = () => {
@@ -16,6 +17,8 @@ const ProductDetail = () => {
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
   const [reviewMessage, setReviewMessage] = useState('');
   const [deletingReviewId, setDeletingReviewId] = useState(null);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
   const isLoggedIn = !!localStorage.getItem('token');
 
   const averageRating = reviews.length > 0
@@ -38,6 +41,11 @@ const ProductDetail = () => {
   }, [id]);
 
   useEffect(() => {
+    if (!id) return;
+    setIsInWishlist(checkWishlist(Number(id)));
+  }, [id]);
+
+  useEffect(() => {
     const fetchReviews = async () => {
       if (!id) return;
       try {
@@ -56,6 +64,36 @@ const ProductDetail = () => {
     addToCartItem(productWithQuantity);
     setAddedMessage(`Added ${quantity} item${quantity > 1 ? 's' : ''} to cart`);
     setTimeout(() => setAddedMessage(''), 3000);
+  };
+
+  const handleToggleWishlist = async () => {
+    if (!product || !isLoggedIn) return;
+    setWishlistLoading(true);
+    try {
+      const productData = {
+        productId: product.productId,
+        name: product.name,
+        price: product.price,
+        imageUrls: product.imageUrls,
+        categoryName: product.categoryName,
+        stock: product.stock,
+      };
+
+      if (isInWishlist) {
+        await wishlistAPI.remove(product.productId);
+        toggleWishlistItem(productData);
+        setIsInWishlist(false);
+      } else {
+        await wishlistAPI.add(product.productId);
+        toggleWishlistItem(productData);
+        setIsInWishlist(true);
+      }
+      window.dispatchEvent(new Event('wishlist:updated'));
+    } catch {
+      // ignore
+    } finally {
+      setWishlistLoading(false);
+    }
   };
 
   const handleReviewSubmit = async (e) => {
@@ -193,6 +231,14 @@ const ProductDetail = () => {
                 disabled={product.stock === 0}
               >
                 <FiShoppingCart /> Add to Cart
+              </button>
+              <button
+                className={`btn wishlist-btn ${isInWishlist ? 'active' : ''}`}
+                onClick={handleToggleWishlist}
+                disabled={wishlistLoading}
+                title={isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+              >
+                <FiHeart /> {isInWishlist ? 'Saved' : 'Save'}
               </button>
             </div>
 

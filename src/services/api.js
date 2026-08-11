@@ -67,4 +67,11 @@ export const customerReviewsAPI = {
   delete: (reviewId) => api.delete(`/customer/reviews/${reviewId}`),
 };
 
+export const wishlistAPI = {
+  getAll: () => api.get('/customer/wishlist'),
+  add: (productId) => api.post(`/customer/wishlist/${productId}`),
+  remove: (productId) => api.delete(`/customer/wishlist/${productId}`),
+  check: (productId) => api.get(`/customer/wishlist/check/${productId}`),
+};
+
 export default api;

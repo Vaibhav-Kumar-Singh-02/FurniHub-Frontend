@@ -220,10 +220,13 @@
 .search-card-actions {
   padding: 0.75rem 1.25rem 1.25rem;
   border-top: 1px solid var(--border-light);
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
 }
 
 .search-card-add-btn {
-  width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -249,6 +252,34 @@
   opacity: 0.6;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+.search-card-wishlist-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.search-card-wishlist-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.search-card-wishlist-btn.active {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
 }
 
 @media (max-width: 768px) {

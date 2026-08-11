@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FiShoppingCart } from 'react-icons/fi';
+import { FiShoppingCart, FiHeart } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { getCatalogData } from '../utils/catalog';
 import { addToCartItem } from '../utils/cart';
+import { isInWishlist as checkWishlist, toggleWishlistItem } from '../utils/wishlist';
 import '../styles/Categories.css';
 
 const Categories = () => {
@@ -11,6 +12,7 @@ const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
+  const [wishlistProductIds, setWishlistProductIds] = useState(new Set());
 
   useEffect(() => {
     const loadCatalog = async () => {
@@ -22,6 +24,12 @@ const Categories = () => {
         const { categories: loadedCategories, products: loadedProducts } = getCatalogData(categoriesResponse, productsResponse);
         setCategories(loadedCategories);
         setProducts(loadedProducts);
+
+        const ids = new Set();
+        loadedProducts.forEach((p) => {
+          if (checkWishlist(p.productId)) ids.add(p.productId);
+        });
+        setWishlistProductIds(ids);
       } catch (error) {
         setCategories([]);
         setProducts([]);
@@ -30,6 +38,22 @@ const Categories = () => {
     };
 
     loadCatalog();
+
+    const handleWishlistUpdate = () => {
+      setWishlistProductIds((prev) => {
+        const next = new Set(prev);
+        products.forEach((p) => {
+          if (checkWishlist(p.productId)) {
+            next.add(p.productId);
+          } else {
+            next.delete(p.productId);
+          }
+        });
+        return next;
+      });
+    };
+    window.addEventListener('wishlist:updated', handleWishlistUpdate);
+    return () => window.removeEventListener('wishlist:updated', handleWishlistUpdate);
   }, []);
 
   const filteredCategories = activeCategory === 'all'
@@ -44,6 +68,28 @@ const Categories = () => {
     }
     addToCartItem(product);
     window.dispatchEvent(new Event('cart:updated'));
+  };
+
+  const handleToggleWishlist = (e, product) => {
+    e.stopPropagation();
+    const productData = {
+      productId: product.productId,
+      name: product.name,
+      price: product.price,
+      imageUrls: product.imageUrls,
+      categoryName: product.categoryName,
+      stock: product.stock,
+    };
+    toggleWishlistItem(productData);
+    setWishlistProductIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(product.productId)) {
+        next.delete(product.productId);
+      } else {
+        next.add(product.productId);
+      }
+      return next;
+    });
   };
 
   const handleProductClick = (productId) => {
@@ -107,6 +153,13 @@ const Categories = () => {
                         <span>No Image</span>
                       </div>
                     )}
+                    <button
+                      className={`category-wishlist-btn ${wishlistProductIds.has(product.productId) ? 'active' : ''}`}
+                      onClick={(e) => handleToggleWishlist(e, product)}
+                      title={wishlistProductIds.has(product.productId) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                    >
+                      <FiHeart />
+                    </button>
                   </div>
                   <div className="category-product-details">
                     <h4>{product.name}</h4>
@@ -147,6 +200,13 @@ const Categories = () => {
                       <span>No Image</span>
                     </div>
                   )}
+                  <button
+                    className={`category-wishlist-btn ${wishlistProductIds.has(product.productId) ? 'active' : ''}`}
+                    onClick={(e) => handleToggleWishlist(e, product)}
+                    title={wishlistProductIds.has(product.productId) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                  >
+                    <FiHeart />
+                  </button>
                 </div>
                 <div className="category-product-details">
                   <h4>{product.name}</h4>

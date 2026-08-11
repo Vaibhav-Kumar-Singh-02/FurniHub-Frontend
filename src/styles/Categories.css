@@ -127,6 +127,7 @@
 }
 
 .category-product-image {
+  position: relative;
   height: 200px;
   overflow: hidden;
 }
@@ -151,6 +152,34 @@
   justify-content: center;
   color: var(--text-tertiary);
   font-size: 0.9rem;
+}
+
+.category-wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.category-wishlist-btn:hover {
+  transform: scale(1.1);
+}
+
+.category-wishlist-btn.active {
+  background: #ef4444;
+  color: white;
 }
 
 .category-product-details {
