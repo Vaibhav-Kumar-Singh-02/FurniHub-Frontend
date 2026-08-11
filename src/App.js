@@ -326,7 +326,7 @@ const CartPage = () => {
         {items.length === 0 ? (
           <p className="cart-empty">Your cart is empty.</p>
         ) : (
-          <>
+          <React.Fragment>
             <ul className="cart-items-list">
               {items.map((item) => (
                 <li key={item.id} className="cart-item">
@@ -431,60 +431,60 @@ const CartPage = () => {
                         />
                       </label>
                     </div>
-                    <label className="address-field full-width">
-                      <span>Address Line 1 <em>*</em></span>
-                      <input
-                        type="text"
-                        value={addressLine1}
-                        onChange={(e) => setAddressLine1(e.target.value)}
-                        placeholder="House no., Street, Area"
-                      />
-                    </label>
-                    <label className="address-field full-width">
-                      <span>Address Line 2</span>
-                      <input
-                        type="text"
-                        value={addressLine2}
-                        onChange={(e) => setAddressLine2(e.target.value)}
-                        placeholder="Landmark (optional)"
-                      />
-                    </label>
-                    <div className="address-row">
-                      <label className="address-field">
-                        <span>City <em>*</em></span>
-                        <input
-                          type="text"
-                          value={city}
-                          onChange={(e) => setCity(e.target.value)}
-                          placeholder="City"
-                        />
-                      </label>
-                      <label className="address-field">
-                        <span>State <em>*</em></span>
-                        <input
-                          type="text"
-                          value={stateRegion}
-                          onChange={(e) => setStateRegion(e.target.value)}
-                          placeholder="State"
-                        />
-                      </label>
+                     <label className="address-field full-width">
+                       <span>Address Line 1 <em>*</em></span>
+                       <input
+                         type="text"
+                         value={addressLine1}
+                         onChange={(e) => setAddressLine1(e.target.value)}
+                         placeholder="House no., Street, Area"
+                       />
+                     </label>
+                     <label className="address-field full-width">
+                       <span>Address Line 2</span>
+                       <input
+                         type="text"
+                         value={addressLine2}
+                         onChange={(e) => setAddressLine2(e.target.value)}
+                         placeholder="Landmark (optional)"
+                       />
+                     </label>
+                     <div className="address-row">
+                       <label className="address-field">
+                         <span>City <em>*</em></span>
+                         <input
+                           type="text"
+                           value={city}
+                           onChange={(e) => setCity(e.target.value)}
+                           placeholder="City"
+                         />
+                       </label>
+                       <label className="address-field">
+                         <span>State <em>*</em></span>
+                         <input
+                           type="text"
+                           value={stateRegion}
+                           onChange={(e) => setStateRegion(e.target.value)}
+                           placeholder="State"
+                         />
+                       </label>
+                     </div>
+                     <label className="address-field full-width">
+                       <span>Pincode <em>*</em></span>
+                       <input
+                         type="text"
+                         value={pincode}
+                         onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                         placeholder="6-digit pincode"
+                         maxLength="6"
+                       />
+                     </label>
                     </div>
-                    <label className="address-field full-width">
-                      <span>Pincode <em>*</em></span>
-                      <input
-                        type="text"
-                        value={pincode}
-                        onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                        placeholder="6-digit pincode"
-                        maxLength="6"
-                      />
-                    </label>
                   </div>
                 </div>
               </div>
-            </div>
-            )}
-            {addressConfirmed && (
+             )}
+             {addressConfirmed && (
               <p className="address-confirmed-msg">Address confirmed</p>
             )}
 
@@ -568,10 +568,10 @@ const CartPage = () => {
                   </button>
                 </div>
               )}
-            </div>
-          </>
-        )}
-        {showCardModal && (
+             </div>
+           </React.Fragment>
+         )}
+         {showCardModal && (
       <div className="modal-overlay" onClick={() => setShowCardModal(false)}>
         <div className="modal-content modal-image" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
