@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiShoppingCart, FiHeart } from 'react-icons/fi';
-import { catalogAPI } from '../services/api';
+import { catalogAPI, wishlistAPI } from '../services/api';
 import { addToCartItem } from '../utils/cart';
 import { isInWishlist as checkWishlist, toggleWishlistItem } from '../utils/wishlist';
 import '../styles/Search.css';
@@ -44,7 +44,7 @@ const SearchResults = () => {
     fetchResults();
   }, [query]);
 
-  const handleWishlistToggle = (e, product) => {
+  const handleWishlistToggle = async (e, product) => {
     e.preventDefault();
     e.stopPropagation();
     const token = localStorage.getItem('token');
@@ -60,16 +60,19 @@ const SearchResults = () => {
       categoryName: product.categoryName,
       stock: product.stock,
     };
-    toggleWishlistItem(productData);
-    setWishlistProductIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(product.productId)) {
-        next.delete(product.productId);
+
+    try {
+      if (checkWishlist(product.productId)) {
+        await wishlistAPI.remove(product.productId);
+        toggleWishlistItem(productData);
       } else {
-        next.add(product.productId);
+        await wishlistAPI.add(product.productId);
+        toggleWishlistItem(productData);
       }
-      return next;
-    });
+      window.dispatchEvent(new Event('wishlist:updated'));
+    } catch {
+      // ignore API error, keep local state as-is
+    }
   };
 
   const formatCurrency = (val) => {

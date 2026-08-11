@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import { wishlistAPI, catalogAPI } from '../services/api';
 import { getCatalogData } from '../utils/catalog';
 import { addToCartItem } from '../utils/cart';
 import { isInWishlist as checkWishlist, toggleWishlistItem } from '../utils/wishlist';
@@ -18,8 +18,8 @@ const Categories = () => {
     const loadCatalog = async () => {
       try {
         const [categoriesResponse, productsResponse] = await Promise.all([
-          api.get('/categories').catch(() => []),
-          api.get('/products').catch(() => []),
+          catalogAPI.getCategories().catch(() => []),
+          catalogAPI.getProducts().catch(() => []),
         ]);
         const { categories: loadedCategories, products: loadedProducts } = getCatalogData(categoriesResponse, productsResponse);
         setCategories(loadedCategories);
@@ -70,7 +70,7 @@ const Categories = () => {
     window.dispatchEvent(new Event('cart:updated'));
   };
 
-  const handleToggleWishlist = (e, product) => {
+  const handleToggleWishlist = async (e, product) => {
     e.stopPropagation();
     const token = localStorage.getItem('token');
     if (!token) {
@@ -85,16 +85,19 @@ const Categories = () => {
       categoryName: product.categoryName,
       stock: product.stock,
     };
-    toggleWishlistItem(productData);
-    setWishlistProductIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(product.productId)) {
-        next.delete(product.productId);
+
+    try {
+      if (checkWishlist(product.productId)) {
+        await wishlistAPI.remove(product.productId);
+        toggleWishlistItem(productData);
       } else {
-        next.add(product.productId);
+        await wishlistAPI.add(product.productId);
+        toggleWishlistItem(productData);
       }
-      return next;
-    });
+      window.dispatchEvent(new Event('wishlist:updated'));
+    } catch {
+      // ignore API error, keep local state as-is
+    }
   };
 
   const handleProductClick = (productId) => {
