@@ -481,33 +481,6 @@ const CartPage = () => {
                     </label>
                   </div>
                 </div>
-
-                <div className="payment-section">
-                  <h3>Payment Method</h3>
-                  {paymentError && <p className="address-error">{paymentError}</p>}
-                  <div className="payment-options">
-                    <label className="payment-option">
-                      <input type="radio" name="payment" value="cod" defaultChecked />
-                      <span className="payment-label">Cash on Delivery</span>
-                    </label>
-                    <label className="payment-option">
-                      <input type="radio" name="payment" value="card" />
-                      <span className="payment-label">Card</span>
-                    </label>
-                    <label className="payment-option">
-                      <input type="radio" name="payment" value="upi" />
-                      <span className="payment-label">UPI</span>
-                    </label>
-                    <label className="payment-option">
-                      <input type="radio" name="payment" value="razorpay" />
-                      <span className="payment-label">Razorpay</span>
-                    </label>
-                  </div>
-                </div>
-
-                <button type="button" className="btn btn-primary checkout-btn" onClick={handleCheckout}>
-                  Place Order
-                </button>
               </div>
             </div>
             )}
