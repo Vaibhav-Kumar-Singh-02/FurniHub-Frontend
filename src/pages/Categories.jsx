@@ -15,6 +15,10 @@ const Categories = () => {
   const [wishlistProductIds, setWishlistProductIds] = useState(new Set());
 
   useEffect(() => {
+    const productsRef = { current: products };
+    const updateRef = () => { productsRef.current = products; };
+    updateRef();
+
     const loadCatalog = async () => {
       try {
         const [categoriesResponse, productsResponse] = await Promise.all([
@@ -42,7 +46,7 @@ const Categories = () => {
     const handleWishlistUpdate = () => {
       setWishlistProductIds((prev) => {
         const next = new Set(prev);
-        products.forEach((p) => {
+        productsRef.current.forEach((p) => {
           if (checkWishlist(p.productId)) {
             next.add(p.productId);
           } else {
@@ -54,7 +58,7 @@ const Categories = () => {
     };
     window.addEventListener('wishlist:updated', handleWishlistUpdate);
     return () => window.removeEventListener('wishlist:updated', handleWishlistUpdate);
-  }, []);
+  }, [products]);
 
   const filteredCategories = activeCategory === 'all'
     ? categories
@@ -94,6 +98,15 @@ const Categories = () => {
         await wishlistAPI.add(product.productId);
         toggleWishlistItem(productData);
       }
+      setWishlistProductIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(product.productId)) {
+          next.delete(product.productId);
+        } else {
+          next.add(product.productId);
+        }
+        return next;
+      });
       window.dispatchEvent(new Event('wishlist:updated'));
     } catch (err) {
       console.error('Wishlist toggle error:', err);
