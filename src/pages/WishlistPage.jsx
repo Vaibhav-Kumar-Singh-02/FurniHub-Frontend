@@ -11,6 +11,7 @@ const WishlistPage = () => {
   const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState(null);
   const [source, setSource] = useState('api');
+  const [brokenImages, setBrokenImages] = useState(new Set());
 
   const loadWishlist = async () => {
     setLoading(true);
@@ -46,6 +47,17 @@ const WishlistPage = () => {
   useEffect(() => {
     loadWishlist();
   }, []);
+
+  const handleImageError = (itemId) => {
+    setBrokenImages((prev) => new Set(prev).add(itemId));
+  };
+
+  const getImageSrc = (item) => {
+    if (brokenImages.has(item.id)) return null;
+    if (item.imageUrls && item.imageUrls.length > 0) return item.imageUrls[0];
+    if (item.imageUrl) return item.imageUrl;
+    return null;
+  };
 
   const handleRemove = async (productId, wishlistId) => {
     setRemovingId(wishlistId);
@@ -92,10 +104,12 @@ const WishlistPage = () => {
             {items.map((item) => (
               <div key={item.id} className="wishlist-card">
                 <div className="wishlist-card-image">
-                  {item.imageUrls && item.imageUrls.length > 0 ? (
-                    <img src={item.imageUrls[0]} alt={item.productName} />
+                  {getImageSrc(item) ? (
+                    <img src={getImageSrc(item)} alt={item.productName} onError={() => handleImageError(item.id)} />
                   ) : (
-                    <div className="wishlist-card-placeholder">No Image</div>
+                    <div className="wishlist-card-placeholder">
+                      <span>No Image</span>
+                    </div>
                   )}
                   <button
                     className="wishlist-remove-btn"
