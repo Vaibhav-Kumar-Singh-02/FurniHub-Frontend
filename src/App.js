@@ -292,7 +292,6 @@ const CartPage = () => {
         return;
       }
 
-      // Validate card number (16 digits)
       if (cardNumber.replace(/\D/g, '').length !== 16) {
         setCheckoutMessage('Please enter a valid 16-digit card number.');
         setCheckoutMessageType('error');
@@ -300,7 +299,6 @@ const CartPage = () => {
         return;
       }
 
-      // Validate expiry date (MM/YY format)
       if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
         setCheckoutMessage('Please enter expiry date in MM/YY format.');
         setCheckoutMessageType('error');
@@ -326,7 +324,7 @@ const CartPage = () => {
         {items.length === 0 ? (
           <p className="cart-empty">Your cart is empty.</p>
         ) : (
-          <React.Fragment>
+          <>
             <ul className="cart-items-list">
               {items.map((item) => (
                 <li key={item.id} className="cart-item">
@@ -435,280 +433,277 @@ const CartPage = () => {
                         />
                       </label>
                     </div>
-                     <label className="address-field full-width">
-                       <span>Address Line 1 <em>*</em></span>
-                       <input
-                         type="text"
-                         value={addressLine1}
-                         onChange={(e) => setAddressLine1(e.target.value)}
-                         placeholder="House no., Street, Area"
-                       />
-                     </label>
-                     <label className="address-field full-width">
-                       <span>Address Line 2</span>
-                       <input
-                         type="text"
-                         value={addressLine2}
-                         onChange={(e) => setAddressLine2(e.target.value)}
-                         placeholder="Landmark (optional)"
-                       />
-                     </label>
-                     <div className="address-row">
-                       <label className="address-field">
-                         <span>City <em>*</em></span>
-                         <input
-                           type="text"
-                           value={city}
-                           onChange={(e) => setCity(e.target.value)}
-                           placeholder="City"
-                         />
-                       </label>
-                       <label className="address-field">
-                         <span>State <em>*</em></span>
-                         <input
-                           type="text"
-                           value={stateRegion}
-                           onChange={(e) => setStateRegion(e.target.value)}
-                           placeholder="State"
-                         />
-                       </label>
-                     </div>
-                     <label className="address-field full-width">
-                       <span>Pincode <em>*</em></span>
-                       <input
-                         type="text"
-                         value={pincode}
-                         onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                         placeholder="6-digit pincode"
-                         maxLength="6"
-                       />
-                     </label>
+                    <label className="address-field full-width">
+                      <span>Address Line 1 <em>*</em></span>
+                      <input
+                        type="text"
+                        value={addressLine1}
+                        onChange={(e) => setAddressLine1(e.target.value)}
+                        placeholder="House no., Street, Area"
+                      />
+                    </label>
+                    <label className="address-field full-width">
+                      <span>Address Line 2</span>
+                      <input
+                        type="text"
+                        value={addressLine2}
+                        onChange={(e) => setAddressLine2(e.target.value)}
+                        placeholder="Landmark (optional)"
+                      />
+                    </label>
+                    <div className="address-row">
+                      <label className="address-field">
+                        <span>City <em>*</em></span>
+                        <input
+                          type="text"
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="City"
+                        />
+                      </label>
+                      <label className="address-field">
+                        <span>State <em>*</em></span>
+                        <input
+                          type="text"
+                          value={stateRegion}
+                          onChange={(e) => setStateRegion(e.target.value)}
+                          placeholder="State"
+                        />
+                      </label>
                     </div>
+                    <label className="address-field full-width">
+                      <span>Pincode <em>*</em></span>
+                      <input
+                        type="text"
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        placeholder="6-digit pincode"
+                        maxLength="6"
+                      />
+                    </label>
                   </div>
                 </div>
-              </div>
-             )}
-             {addressConfirmed && (
-              <p className="address-confirmed-msg">Address confirmed</p>
-            )}
 
-            <div className="payment-section">
-              <h3>Choose Payment</h3>
-              <div className="payment-options">
-                <label className={`payment-option ${paymentMethod === 'cod' ? 'active' : ''}`}>
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="cod"
-                    checked={paymentMethod === 'cod'}
-                    onChange={() => {
-                      resetPaymentFields();
-                      setPaymentMethod('cod');
-                    }}
-                  />
-                  Cash on Delivery
-                </label>
-                <label className={`payment-option ${paymentMethod === 'card' ? 'active' : ''}`}>
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="card"
-                    checked={paymentMethod === 'card'}
-                    onChange={() => {
-                      resetPaymentFields();
-                      setPaymentMethod('card');
-                      setShowCardModal(true);
-                    }}
-                  />
-                  Debit / Credit Card
-                </label>
-                <label className={`payment-option ${paymentMethod === 'upi' ? 'active' : ''}`}>
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="upi"
-                    checked={paymentMethod === 'upi'}
-                    onChange={() => {
-                      resetPaymentFields();
-                      setPaymentMethod('upi');
-                      setShowUpiModal(true);
-                    }}
-                  />
-                  UPI
-                </label>
-                <label className={`payment-option ${paymentMethod === 'razorpay' ? 'active' : ''}`}>
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="razorpay"
-                    checked={paymentMethod === 'razorpay'}
-                    onChange={() => {
-                      resetPaymentFields();
-                      setPaymentMethod('razorpay');
-                    }}
-                  />
-                  Razorpay (Card/UPI/Wallet)
-                </label>
-              </div>
+                <div className="payment-section">
+                  <h3>Choose Payment</h3>
+                  <div className="payment-options">
+                    <label className={`payment-option ${paymentMethod === 'cod' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="cod"
+                        checked={paymentMethod === 'cod'}
+                        onChange={() => {
+                          resetPaymentFields();
+                          setPaymentMethod('cod');
+                        }}
+                      />
+                      Cash on Delivery
+                    </label>
+                    <label className={`payment-option ${paymentMethod === 'card' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="card"
+                        checked={paymentMethod === 'card'}
+                        onChange={() => {
+                          resetPaymentFields();
+                          setPaymentMethod('card');
+                          setShowCardModal(true);
+                        }}
+                      />
+                      Debit / Credit Card
+                    </label>
+                    <label className={`payment-option ${paymentMethod === 'upi' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="upi"
+                        checked={paymentMethod === 'upi'}
+                        onChange={() => {
+                          resetPaymentFields();
+                          setPaymentMethod('upi');
+                          setShowUpiModal(true);
+                        }}
+                      />
+                      UPI
+                    </label>
+                    <label className={`payment-option ${paymentMethod === 'razorpay' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="razorpay"
+                        checked={paymentMethod === 'razorpay'}
+                        onChange={() => {
+                          resetPaymentFields();
+                          setPaymentMethod('razorpay');
+                        }}
+                      />
+                      Razorpay (Card/UPI/Wallet)
+                    </label>
+                  </div>
 
-              <button className="btn btn-primary checkout-btn" onClick={handleCheckout}>
-                Proceed to Pay
-              </button>
-              {checkoutMessage && (
-                <div className={`checkout-message ${checkoutMessageType === 'success' ? 'checkout-success' : checkoutMessageType === 'error' ? 'checkout-error' : 'checkout-info'}`}>
-                  {checkoutMessage}
-                </div>
-              )}
-              {paymentError && <p className="checkout-error">{paymentError}</p>}
-              {orderStatus && (
-                <div className="order-status-card">
-                  <h4>Order Status</h4>
-                  <p><strong>Status:</strong> {orderStatus.status}</p>
-                  <p><strong>Payment:</strong> {orderStatus.paymentMethod}</p>
-                  <p><strong>Deliver to:</strong> {orderStatus.deliveryAddress}</p>
-                  <p><strong>Delivery by:</strong> {orderStatus.deliveryDate}</p>
-                  <button className="btn btn-primary" style={{ marginTop: 12 }} onClick={() => navigate(`/receipt/${orderStatus.orderId}`)}>
-                    View Receipt
+                  <button className="btn btn-primary checkout-btn" onClick={handleCheckout}>
+                    Proceed to Pay
                   </button>
-                </div>
-              )}
-             </div>
-           </React.Fragment>
-         )}
-         {showCardModal && (
-      <div className="modal-overlay" onClick={() => setShowCardModal(false)}>
-        <div className="modal-content modal-image" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h3>Card Payment</h3>
-                <button className="modal-close" onClick={() => setShowCardModal(false)}>&times;</button>
-              </div>
-              <div className="modal-body">
-                <div className="upi-form">
-                  <label className="upi-field">
-                    <span>Name on Card</span>
-                    <input
-                      type="text"
-                      value={cardHolderName}
-                      onChange={(e) => setCardHolderName(e.target.value)}
-                      placeholder="Enter cardholder name"
-                    />
-                  </label>
-                  <label className="upi-field">
-                    <span>Card Number</span>
-                    <input
-                      type="text"
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))}
-                      placeholder="1234 5678 9012 3456"
-                      maxLength="16"
-                    />
-                  </label>
-                  <label className="upi-field">
-                    <span>Expiry Date (MM/YY)</span>
-                    <input
-                      type="text"
-                      value={expiryDate}
-                      onChange={(e) => {
-                        let val = e.target.value.replace(/\D/g, '');
-                        if (val.length >= 2) {
-                          val = val.slice(0, 2) + '/' + val.slice(2, 4);
-                        }
-                        setExpiryDate(val);
-                      }}
-                      placeholder="MM/YY"
-                      maxLength="5"
-                    />
-                  </label>
-                  <label className="upi-field">
-                    <span>Bank Name</span>
-                    <input
-                      type="text"
-                      value={bankName}
-                      onChange={(e) => setBankName(e.target.value)}
-                      placeholder="Enter bank name"
-                    />
-                  </label>
-                  <div className="card-nickname-section">
-                    <span className="nickname-label">Nickname for Card</span>
-                    <div className="nickname-options">
-                      <label className="nickname-option">
-                        <input
-                          type="radio"
-                          name="nickname"
-                          value="Personal"
-                          checked={cardNickname === 'Personal'}
-                          onChange={(e) => setCardNickname(e.target.value)}
-                        />
-                        Personal
-                      </label>
-                      <label className="nickname-option">
-                        <input
-                          type="radio"
-                          name="nickname"
-                          value="Business"
-                          checked={cardNickname === 'Business'}
-                          onChange={(e) => setCardNickname(e.target.value)}
-                        />
-                        Business
-                      </label>
-                      <label className="nickname-option">
-                        <input
-                          type="radio"
-                          name="nickname"
-                          value="Other"
-                          checked={cardNickname === 'Other'}
-                          onChange={(e) => setCardNickname(e.target.value)}
-                        />
-                        Other
-                      </label>
+                  {checkoutMessage && (
+                    <div className={`checkout-message ${checkoutMessageType === 'success' ? 'checkout-success' : checkoutMessageType === 'error' ? 'checkout-error' : 'checkout-info'}`}>
+                      {checkoutMessage}
                     </div>
-                  </div>
+                  )}
+                  {paymentError && <p className="checkout-error">{paymentError}</p>}
+                  {orderStatus && (
+                    <div className="order-status-card">
+                      <h4>Order Status</h4>
+                      <p><strong>Status:</strong> {orderStatus.status}</p>
+                      <p><strong>Payment:</strong> {orderStatus.paymentMethod}</p>
+                      <p><strong>Deliver to:</strong> {orderStatus.deliveryAddress}</p>
+                      <p><strong>Delivery by:</strong> {orderStatus.deliveryDate}</p>
+                      <button className="btn btn-primary" style={{ marginTop: 12 }} onClick={() => navigate(`/receipt/${orderStatus.orderId}`)}>
+                        View Receipt
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowCardModal(false)}>Cancel</button>
-                <button className="btn btn-primary" onClick={() => { setShowCardModal(false); handleCheckout(); }}>Pay Now</button>
-              </div>
             </div>
-          </div>
-        )}
-        {showUpiModal && (
-          <div className="modal-overlay" onClick={() => setShowUpiModal(false)}>
-            <div className="modal-content modal-image" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h3>UPI Payment</h3>
-                <button className="modal-close" onClick={() => setShowUpiModal(false)}>&times;</button>
-              </div>
-              <div className="modal-body">
-                <div className="upi-form">
-                  <label className="upi-field">
-                    <span>UPI ID</span>
-                    <input
-                      type="text"
-                      value={upiId}
-                      onChange={(e) => setUpiId(e.target.value)}
-                      placeholder="your name@upi"
-                    />
-                  </label>
-                  <label className="upi-field">
-                    <span>UPI Password</span>
-                    <input
-                      type="password"
-                      value={upiPassword}
-                      onChange={(e) => setUpiPassword(e.target.value)}
-                      placeholder="Enter password"
-                    />
-                  </label>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowUpiModal(false)}>Cancel</button>
-                <button className="btn btn-primary" onClick={() => { setShowUpiModal(false); handleCheckout(); }}>Pay Now</button>
-              </div>
-            </div>
-          </div>
+          </>
         )}
       </div>
+
+      {showCardModal && (
+        <div className="modal-overlay" onClick={() => setShowCardModal(false)}>
+          <div className="modal-content modal-image" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Card Payment</h3>
+              <button className="modal-close" onClick={() => setShowCardModal(false)}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="upi-form">
+                <label className="upi-field">
+                  <span>Name on Card</span>
+                  <input
+                    type="text"
+                    value={cardHolderName}
+                    onChange={(e) => setCardHolderName(e.target.value)}
+                    placeholder="Enter cardholder name"
+                  />
+                </label>
+                <label className="upi-field">
+                  <span>Card Number</span>
+                  <input
+                    type="text"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))}
+                    placeholder="1234 5678 9012 3456"
+                    maxLength="16"
+                  />
+                </label>
+                <label className="upi-field">
+                  <span>Expiry Date (MM/YY)</span>
+                  <input
+                    type="text"
+                    value={expiryDate}
+                    onChange={(e) => {
+                      let val = e.target.value.replace(/\D/g, '');
+                      if (val.length >= 2) {
+                        val = val.slice(0, 2) + '/' + val.slice(2, 4);
+                      }
+                      setExpiryDate(val);
+                    }}
+                    placeholder="MM/YY"
+                    maxLength="5"
+                  />
+                </label>
+                <label className="upi-field">
+                  <span>Bank Name</span>
+                  <input
+                    type="text"
+                    value={bankName}
+                    onChange={(e) => setBankName(e.target.value)}
+                    placeholder="Enter bank name"
+                  />
+                </label>
+                <div className="card-nickname-section">
+                  <span className="nickname-label">Nickname for Card</span>
+                  <div className="nickname-options">
+                    <label className="nickname-option">
+                      <input
+                        type="radio"
+                        name="nickname"
+                        value="Personal"
+                        checked={cardNickname === 'Personal'}
+                        onChange={(e) => setCardNickname(e.target.value)}
+                      />
+                      Personal
+                    </label>
+                    <label className="nickname-option">
+                      <input
+                        type="radio"
+                        name="nickname"
+                        value="Business"
+                        checked={cardNickname === 'Business'}
+                        onChange={(e) => setCardNickname(e.target.value)}
+                      />
+                      Business
+                    </label>
+                    <label className="nickname-option">
+                      <input
+                        type="radio"
+                        name="nickname"
+                        value="Other"
+                        checked={cardNickname === 'Other'}
+                        onChange={(e) => setCardNickname(e.target.value)}
+                      />
+                      Other
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setShowCardModal(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={() => { setShowCardModal(false); handleCheckout(); }}>Pay Now</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showUpiModal && (
+        <div className="modal-overlay" onClick={() => setShowUpiModal(false)}>
+          <div className="modal-content modal-image" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>UPI Payment</h3>
+              <button className="modal-close" onClick={() => setShowUpiModal(false)}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="upi-form">
+                <label className="upi-field">
+                  <span>UPI ID</span>
+                  <input
+                    type="text"
+                    value={upiId}
+                    onChange={(e) => setUpiId(e.target.value)}
+                    placeholder="your name@upi"
+                  />
+                </label>
+                <label className="upi-field">
+                  <span>UPI Password</span>
+                  <input
+                    type="password"
+                    value={upiPassword}
+                    onChange={(e) => setUpiPassword(e.target.value)}
+                    placeholder="Enter password"
+                  />
+                </label>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setShowUpiModal(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={() => { setShowUpiModal(false); handleCheckout(); }}>Pay Now</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
