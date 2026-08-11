@@ -80,17 +80,21 @@ const ProductDetail = () => {
       };
 
       if (isInWishlist) {
+        console.log('Removing from wishlist:', product.productId);
         await wishlistAPI.remove(product.productId);
+        console.log('Removed from wishlist');
         toggleWishlistItem(productData);
         setIsInWishlist(false);
       } else {
+        console.log('Adding to wishlist:', product.productId);
         await wishlistAPI.add(product.productId);
+        console.log('Added to wishlist');
         toggleWishlistItem(productData);
         setIsInWishlist(true);
       }
       window.dispatchEvent(new Event('wishlist:updated'));
-    } catch {
-      // ignore
+    } catch (err) {
+      console.error('Wishlist toggle error:', err);
     } finally {
       setWishlistLoading(false);
     }

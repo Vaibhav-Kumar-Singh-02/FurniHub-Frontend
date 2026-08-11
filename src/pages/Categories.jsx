@@ -95,8 +95,8 @@ const Categories = () => {
         toggleWishlistItem(productData);
       }
       window.dispatchEvent(new Event('wishlist:updated'));
-    } catch {
-      // ignore API error, keep local state as-is
+    } catch (err) {
+      console.error('Wishlist toggle error:', err);
     }
   };
 

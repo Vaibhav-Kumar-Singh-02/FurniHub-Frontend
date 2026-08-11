@@ -14,8 +14,10 @@ const WishlistPage = () => {
     setLoading(true);
     try {
       const res = await wishlistAPI.getAll();
+      console.log('Wishlist API response:', res);
       setItems(res.data || []);
-    } catch {
+    } catch (err) {
+      console.error('Wishlist API error:', err);
       setItems([]);
     } finally {
       setLoading(false);
