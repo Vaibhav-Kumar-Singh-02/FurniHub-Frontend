@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FiArrowLeft, FiShoppingCart, FiStar, FiShield, FiTruck, FiHeart } from 'react-icons/fi';
-import { authAPI, customerReviewsAPI, wishlistAPI } from '../services/api';
+import { catalogAPI, customerReviewsAPI, wishlistAPI } from '../services/api';
 import { addToCartItem } from '../utils/cart';
 import { isInWishlist as checkWishlist, toggleWishlistItem } from '../utils/wishlist';
 import '../styles/ProductDetail.css';
@@ -28,7 +28,7 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await authAPI.getProductById(id);
+        const response = await catalogAPI.getProductById(id);
         setProduct(response.data);
         setLoading(false);
       } catch (err) {

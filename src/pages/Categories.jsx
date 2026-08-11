@@ -72,6 +72,11 @@ const Categories = () => {
 
   const handleToggleWishlist = (e, product) => {
     e.stopPropagation();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
     const productData = {
       productId: product.productId,
       name: product.name,

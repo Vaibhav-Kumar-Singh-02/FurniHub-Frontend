@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiShoppingCart, FiPlus, FiMinus, FiHeart } from 'react-icons/fi';
+import { FiArrowLeft, FiShoppingCart, FiHeart } from 'react-icons/fi';
 import { catalogAPI } from '../services/api';
 import { addToCartItem } from '../utils/cart';
 import { isInWishlist as checkWishlist, toggleWishlistItem } from '../utils/wishlist';
@@ -47,6 +47,11 @@ const SearchResults = () => {
   const handleWishlistToggle = (e, product) => {
     e.preventDefault();
     e.stopPropagation();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
     const productData = {
       productId: product.productId,
       name: product.name,
