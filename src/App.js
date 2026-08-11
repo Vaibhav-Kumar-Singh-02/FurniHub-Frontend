@@ -330,6 +330,13 @@ const CartPage = () => {
             <ul className="cart-items-list">
               {items.map((item) => (
                 <li key={item.id} className="cart-item">
+                  <div className="cart-item-image">
+                    {item.imageUrls && item.imageUrls.length > 0 ? (
+                      <img src={item.imageUrls[0]} alt={item.name} />
+                    ) : (
+                      <div className="cart-item-image-placeholder">No Image</div>
+                    )}
+                  </div>
                   <div className="cart-item-info">
                     <div className="cart-item-name">{item.name}</div>
                     <div className="cart-item-price">₹{Number(item.price).toLocaleString('en-IN')}</div>

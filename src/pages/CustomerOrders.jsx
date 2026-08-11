@@ -290,7 +290,17 @@ const CustomerOrders = () => {
                       <strong>Items:</strong>
                       <ul style={{ marginTop: 8, paddingLeft: 20 }}>
                         {selectedOrder.items.map((item, idx) => (
-                          <li key={idx}>{item.productName || 'Product'} x{item.quantity} - {formatCurrency(item.totalPrice || item.pricePerUnit * item.quantity)}</li>
+                          <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                            {item.imageUrl ? (
+                              <img src={item.imageUrl} alt={item.productName} style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }} />
+                            ) : (
+                              <div style={{ width: 48, height: 48, borderRadius: 8, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.7rem' }}>No Image</div>
+                            )}
+                            <div>
+                              <div style={{ fontWeight: 600 }}>{item.productName || 'Product'}</div>
+                              <div style={{ fontSize: '0.85rem', color: '#64748b' }}>x{item.quantity} - {formatCurrency(item.totalPrice || item.pricePerUnit * item.quantity)}</div>
+                            </div>
+                          </li>
                         ))}
                       </ul>
                       
@@ -299,7 +309,14 @@ const CustomerOrders = () => {
                         {reviewMessage && <div className="review-message">{reviewMessage}</div>}
                         {selectedOrder.items.map((item, idx) => (
                           <div key={idx} style={{ marginTop: 12, padding: 12, border: '1px solid #e5e7eb', borderRadius: 8 }}>
-                            <p style={{ margin: '0 0 8px', fontWeight: 600 }}>{item.productName || 'Product'}</p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                              {item.imageUrl ? (
+                                <img src={item.imageUrl} alt={item.productName} style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} />
+                              ) : (
+                                <div style={{ width: 40, height: 40, borderRadius: 6, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.65rem' }}>No Image</div>
+                              )}
+                              <p style={{ margin: 0, fontWeight: 600 }}>{item.productName || 'Product'}</p>
+                            </div>
                             {reviewProductId === item.productId ? (
                               <form onSubmit={(e) => handleReviewSubmit(e, item.productId)}>
                                 <div className="form-group">

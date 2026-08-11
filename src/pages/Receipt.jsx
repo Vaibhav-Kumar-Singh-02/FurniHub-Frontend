@@ -233,30 +233,39 @@ const Receipt = () => {
           <div className="receipt-section">
             <h3>Order Items</h3>
             <div className="receipt-table-wrapper">
-              <table className="receipt-table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Product</th>
-                    <th>Brand</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {receipt.items?.map((item, idx) => (
-                    <tr key={idx}>
-                      <td>{idx + 1}</td>
-                      <td>{item.productName}</td>
-                      <td>{item.brand}</td>
-                      <td>{item.quantity}</td>
-                      <td>{formatCurrency(item.pricePerUnit)}</td>
-                      <td>{formatCurrency(item.totalPrice)}</td>
+                <table className="receipt-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Product</th>
+                      <th>Brand</th>
+                      <th>Qty</th>
+                      <th>Price</th>
+                      <th>Total</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {receipt.items?.map((item, idx) => (
+                      <tr key={idx}>
+                        <td>{idx + 1}</td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            {item.imageUrl ? (
+                              <img src={item.imageUrl} alt={item.productName} style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} />
+                            ) : (
+                              <div style={{ width: 40, height: 40, borderRadius: 6, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.65rem' }}>No Image</div>
+                            )}
+                            <span>{item.productName}</span>
+                          </div>
+                        </td>
+                        <td>{item.brand}</td>
+                        <td>{item.quantity}</td>
+                        <td>{formatCurrency(item.pricePerUnit)}</td>
+                        <td>{formatCurrency(item.totalPrice)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
             </div>
           </div>
 
@@ -265,7 +274,14 @@ const Receipt = () => {
             {reviewMessage && <div className="review-message">{reviewMessage}</div>}
             {receipt.items?.map((item, idx) => (
               <div key={idx} style={{ marginTop: 12, padding: 12, border: '1px solid #e5e7eb', borderRadius: 8 }}>
-                <p style={{ margin: '0 0 8px', fontWeight: 600 }}>{item.productName}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                  {item.imageUrl ? (
+                    <img src={item.imageUrl} alt={item.productName} style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: 40, height: 40, borderRadius: 6, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.65rem' }}>No Image</div>
+                  )}
+                  <p style={{ margin: 0, fontWeight: 600 }}>{item.productName}</p>
+                </div>
                 {reviewProductId === item.productId ? (
                   <form onSubmit={(e) => handleReviewSubmit(e, item.productId)}>
                     <div className="form-group">
