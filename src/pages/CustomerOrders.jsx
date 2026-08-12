@@ -72,7 +72,35 @@ const CustomerOrders = () => {
       case 'shipped': return 'status-shipped';
       case 'delivered': return 'status-delivered';
       case 'cancelled': return 'status-cancelled';
+      case 'returned': return 'status-cancelled';
       default: return '';
+    }
+  };
+
+  const isEligibleForReturn = (order) => {
+    if (!order || order.status === 'RETURNED' || order.status === 'CANCELLED') return false;
+    const dateStr = order.createdAt || order.orderDate;
+    if (!dateStr) return false;
+    const orderDate = new Date(dateStr);
+    const diffDays = Math.ceil(Math.abs(new Date() - orderDate) / (1000 * 60 * 60 * 24));
+    return diffDays <= 15;
+  };
+
+  const handleReturnOrder = async (orderId) => {
+    if (!window.confirm('Are you sure you want to return this product/order? You can return items within 15 days of delivery.')) {
+      return;
+    }
+    setError('');
+    setSuccess('');
+    try {
+      await customerOrdersAPI.returnOrder(orderId, 'Customer requested return within 15 days');
+      setSuccess('Return request processed successfully. Stock has been restored.');
+      loadOrders();
+      if (selectedOrder && selectedOrder.orderId === orderId) {
+        setSelectedOrder({ ...selectedOrder, status: 'RETURNED' });
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.response?.data || 'Failed to process return request.');
     }
   };
 
@@ -259,6 +287,11 @@ const CustomerOrders = () => {
                         <button className="admin-btn admin-btn-sm admin-btn-primary" onClick={() => navigate(`/receipt/${order.orderId}`)}>
                           <FiDownload /> Receipt
                         </button>
+                        {isEligibleForReturn(order) && (
+                          <button className="admin-btn admin-btn-sm admin-btn-danger" onClick={() => handleReturnOrder(order.orderId || order.id)}>
+                            ↩ Return Product
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

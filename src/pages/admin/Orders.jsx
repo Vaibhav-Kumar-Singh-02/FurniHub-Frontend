@@ -106,6 +106,7 @@ const Orders = () => {
           <option value="shipped">Shipped</option>
           <option value="delivered">Delivered</option>
           <option value="cancelled">Cancelled</option>
+          <option value="returned">Returned Product</option>
         </select>
       </div>
 
@@ -203,7 +204,7 @@ const Orders = () => {
                   )}
                   <div style={{ marginTop: 20, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                     <strong>Update Status:</strong>
-                    {['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED'].map((status) => (
+                    {['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'RETURNED'].map((status) => (
                       <button
                         key={status}
                         className={`admin-btn admin-btn-sm ${selectedOrder.status === status ? 'admin-btn-primary' : 'admin-btn-secondary'}`}

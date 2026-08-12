@@ -58,6 +58,7 @@ export const customerOrdersAPI = {
   getAll: (params) => api.get('/customer/orders', { params }),
   getById: (orderId) => api.get(`/customer/orders/${orderId}`),
   getReceipt: (orderId) => api.get(`/customer/orders/${orderId}/receipt`),
+  returnOrder: (orderId, reason) => api.post(`/customer/orders/${orderId}/return`, { reason }),
 };
 
 export const catalogAPI = {
