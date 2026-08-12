@@ -140,18 +140,20 @@ const Categories = () => {
         >
           All ({products.length})
         </button>
-        {categories.map((cat) => {
-          const count = products.filter((p) => p.categoryName === cat.categoryName).length;
-          return (
-            <button
-              key={cat.categorieId}
-              className={`filter-btn ${activeCategory === cat.categorieId ? 'active' : ''}`}
-              onClick={() => setActiveCategory(cat.categorieId)}
-            >
-              {cat.categoryName} ({count})
-            </button>
-          );
-        })}
+        {categories
+          .filter((cat) => products.some((p) => p.categoryName === cat.categoryName))
+          .map((cat) => {
+            const count = products.filter((p) => p.categoryName === cat.categoryName).length;
+            return (
+              <button
+                key={cat.categorieId}
+                className={`filter-btn ${activeCategory === cat.categorieId ? 'active' : ''}`}
+                onClick={() => setActiveCategory(cat.categorieId)}
+              >
+                {cat.categoryName} ({count})
+              </button>
+            );
+          })}
       </div>
 
       {filteredCategories.map((cat) => {
