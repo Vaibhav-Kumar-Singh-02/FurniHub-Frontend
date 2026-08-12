@@ -141,6 +141,7 @@ const Categories = () => {
           All ({products.length})
         </button>
         {categories
+          .filter((cat, idx, self) => self.findIndex((c) => c.categoryName === cat.categoryName) === idx)
           .filter((cat) => products.some((p) => p.categoryName === cat.categoryName))
           .map((cat) => {
             const count = products.filter((p) => p.categoryName === cat.categoryName).length;
